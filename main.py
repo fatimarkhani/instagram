@@ -1,18 +1,61 @@
 auth = False
 
+class User:
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = password
+
+users = []
+
+# =======================================
+
 def login():
-    pass
+    global auth
+    print()
+    print("Login to your account")
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+
+    # Check if the username and password match any user
+    for user in users:
+        if user.username == username and user.password == password:
+            print(f"Welcome back, {username}!")
+            auth = True
+            return
+
+    print("Invalid username or password. Please try again.")
 
 def register():
-    pass
+    print()
+    print("Register a new user")
+    username = input("Enter username: ")
+    email = input("Enter email: ")
+    password = input("Enter password: ")
+
+    # Check if the username already exists
+    for user in users:
+        if user.username == username:
+            print("Username already exists. Please choose a different one.")
+            return
+        if user.email == email:
+            print("Email already exists. Please choose a different one.")
+            return
+
+    # Create a new user and add to the list
+    new_user = User(username, email, password)
+    users.append(new_user)
+    print(f"User {username} registered successfully!")
 
 def auth_menu():
-    print("Welcome to the Authentication Menu")
-    print("1. Login")
-    print("2. Register")
-    print("3. Exit")
-
     while not auth:
+        print()
+        print("----------------------------------")
+        print()
+        print("Welcome to the Authentication Menu")
+        print("1. Login")
+        print("2. Register")
+        print("3. Exit")
         choice = input("Please choose an option (1-3): ")
         if choice == '1':
             login()
@@ -132,13 +175,16 @@ def profile_menu():
 # =======================================
 
 def main_menu():
-    print("Welcome to the Main Menu")
-    print("1. Home")
-    print("2. Search")
-    print("3. Profile")
-    print("4. Exit")
-
     while True:
+        print()
+        print("----------------------------------")
+        print()
+        print("Main Menu:")
+        print("1. Home")
+        print("2. Search")
+        print("3. Profile")
+        print("4. Exit")
+
         choice = input("Please choose an option (1-4): ")
         if choice == '1':
             home_menu()
