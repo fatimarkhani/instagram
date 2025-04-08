@@ -3,22 +3,6 @@ import time
 auth = False
 user_id = 0
 
-class User:
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
-        self.followers = []
-        self.followings = [0]
-        self.posts = []
-        self.stories = []
-        self.messages = []
-        self.blocked_users = []
-        self.saved_posts = []
-        self.follow_requests = []
-        self.privacy = "public"
-
-
 class Post:
     def __init__(self, content, user):
         self.content = content
@@ -35,6 +19,29 @@ class Story:
         self.date = time.strftime("%Y-%m-%d %H:%M:%S")
         self.user = user
         self.likes = 0
+
+
+class User:
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = password
+        self.followers = []
+        
+        # TODO
+        if username != "mehdi":
+            self.followings = [0]
+        else:
+            self.followings = []
+        
+        # TODO
+        self.posts = [Post("salam post", 0)]
+        self.stories = [Story("salam story", 0)]
+        self.messages = []
+        self.blocked_users = []
+        self.saved_posts = []
+        self.follow_requests = []
+        self.privacy = "public"
 
 users = []
 
@@ -103,23 +110,28 @@ def auth_menu():
 
 def see_posts():
     print()
+    print("-----------------------------------")
+    print()
     print("Posts of people you follow:")
-    if len(users[user_id].posts) == 0:
+    print()
+    if len(users[user_id].followings) == 0:
         print("No posts available.")
         return
     
     # keep user id of the user who posted the post
     post_list = dict()
     
-    for user in users[user_id].following:
+    for user in users[user_id].followings:
         if len(users[user].posts) > 0:
-            print(f"{len(post_list) + 1}. @{users[user].username}")
-            print(f"{users[user].posts[-1].content} (Posted on {users[user].posts[-1].date})")
-            print(f"Likes: {users[user].posts[-1].likes}")
-            print(f"Saved: {users[user].posts[-1].saves}")
+            print(f"🆔 {len(post_list) + 1}. @{users[user].username}")
+            print(f"📰 {users[user].posts[-1].content} (Posted on {users[user].posts[-1].date})")
+            print(f"❤️ Likes: {users[user].posts[-1].likes}")
+            print(f"💾 Saved: {users[user].posts[-1].saves}")
             print("Comments: ")
             for comment in users[user].posts[-1].comments:
                 print(f"- {comment}")
+            print()
+            print("-----------------------------------")
             print()
             post_list[len(post_list) + 1] = user
     
@@ -134,23 +146,30 @@ def see_posts():
                 continue
             id = post_list[choice]
             users[id].posts[-1].likes += 1
-            print(f"You liked {users[id].posts[-1].content} by {users[id].username}.")
+            print(f"You liked {users[id].posts[-1].content} by @{users[id].username}.")
         except ValueError:
             print("Invalid input. Please enter a number.")
 
 def see_stories():
     print()
+    print("-----------------------------------")
+    print()
     print("Stories of people you follow:")
-    if len(users[user_id].stories) == 0:
+    print()
+    if len(users[user_id].followings) == 0:
         print("No stories available.")
         return
     
     # keep user id of the user who posted the story
     story_list = dict()
     
-    for user in users[user_id].following:
+    for user in users[user_id].followings:
         if len(users[user].stories) > 0:
-            print(f"{len(story_list) + 1}. {users[user].username} : {users[user].stories[-1].content} (Posted on {users[user].stories[-1].date})")
+            print(f"🆔 {len(story_list) + 1}. @{users[user].username}")
+            print(f"📰 {users[user].stories[-1].content} (Posted on {users[user].stories[-1].date})")
+            print()
+            print("-----------------------------------")
+            print()
             story_list[len(story_list) + 1] = user
     
     while True:
@@ -164,7 +183,7 @@ def see_stories():
                 continue
             id = story_list[choice]
             users[id].stories[-1].likes += 1
-            print(f"You liked {users[id].stories[-1].content} by {users[id].username}.")
+            print(f"You liked {users[id].stories[-1].content} by @{users[id].username}.")
         except ValueError:
             print("Invalid input. Please enter a number.")
         
