@@ -21,6 +21,12 @@ class Story:
         self.likes = 0
 
 
+class Message:
+    def __init__(self, sender, content):
+        self.sender = sender
+        self.content = content
+        self.date = time.strftime("%Y-%m-%d %H:%M:%S")
+
 class User:
     def __init__(self, username, email, password):
         self.username = username
@@ -31,13 +37,13 @@ class User:
         self.followings = []
         self.posts = []
         self.stories = []
-        self.messages = []
         self.blocked_users = []
         self.saved_posts = []
         self.follow_requests = []
         self.privacy = "public"
 
 users = []
+chats = dict()
 
 # =======================================
 
@@ -234,7 +240,88 @@ def see_stories():
             print("Invalid input. Please enter a number.")
         
 def see_messages():
-    pass
+    print()
+    print("Your chats:")
+    print()
+    mark = dict()
+    for i, chat in enumerate(chats.keys()):
+        if user_id == chat[0] or user_id == chat[1]:
+            print(f"🆔 {len(mark) + 1}. Chat with @{users[chat[1]].username if user_id == chat[0] else users[chat[0]].username}")
+            mark[len(mark) + 1] = chat
+    if len(mark) == 0:
+        print("No chats available.")
+        
+    while True:
+        print()
+        print("Actions:")
+        print("1. Start new chat")
+        print("2. Open chat")
+        print("3. Delete chat")
+        print()
+        choice = input("Please choose an option (1-3) or 'q' to quit: ")
+        if choice == 'q':
+            break
+        elif choice == '1':
+            id = -1
+            username = input("Enter the username to chat with: ")
+            for index,user in enumerate(users):
+                if user.username == username and user_id != index and user_id not in user.blocked_users:
+                    id = index
+                    break
+
+            if id == -1:
+                print("User not found.")
+                continue
+            if (user_id, id) not in chats.keys() and (id, user_id) not in chats.keys():
+                chats[(min(user_id, id),max(user_id, id))] = []
+            print(f"Chat started with @{users[id].username}. Open the chat to send messages.")
+        elif choice == '2':
+            if len(mark) == 0:
+                print("No chats available.")
+                continue
+            while True:
+                choice = input("Enter the number of the chat to open or 'q' to quit: ")
+                if choice == 'q':
+                    break
+                try:
+                    choice = int(choice)
+                    if choice not in mark:
+                        print("Invalid choice. Please try again.")
+                        continue
+                    id = mark[choice]
+                    print(f"Chat with @{users[id[1]].username if user_id == id[0] else users[id[0]].username}:")
+                    for message in chats[id]:
+                        print(f"{users[message.sender].username}: {message.content} (Sent on {message.date})")
+                    print()
+                    content = input("Enter your message: ")
+                    new_message = Message(user_id, content)
+                    chats[id].append(new_message)
+                    print("Message sent successfully!")
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+        elif choice == '3':
+            if len(mark) == 0:
+                print("No chats available.")
+                continue
+            while True:
+                choice = input("Enter the number of the chat to delete or 'q' to quit: ")
+                if choice == 'q':
+                    break
+                try:
+                    choice = int(choice)
+                    if choice not in mark:
+                        print("Invalid choice. Please try again.")
+                        continue
+                    id = mark[choice]
+                    chats.pop(id)
+                    print("Chat deleted successfully!")
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+        else:
+            print("Invalid choice. Please try again.")
+            continue
 
 def create_post():
     print()
