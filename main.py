@@ -27,12 +27,13 @@ class User:
         self.email = email
         self.password = password
         self.followers = []
-        
+        self.bio = ""
+
         # TODO
-        if username != "mehdi":
-            self.followings = [0]
-        else:
-            self.followings = []
+        # if username != "mehdi":
+        #     self.followings = [0]
+        # else:
+        self.followings = []
         
         # TODO
         self.posts = [Post("salam post", 0)]
@@ -167,6 +168,7 @@ def see_stories():
         if len(users[user].stories) > 0:
             print(f"🆔 {len(story_list) + 1}. @{users[user].username}")
             print(f"📰 {users[user].stories[-1].content} (Posted on {users[user].stories[-1].date})")
+            print(f"❤️ Likes: {users[user].stories[-1].likes}")
             print()
             print("-----------------------------------")
             print()
@@ -267,8 +269,69 @@ def home_menu():
 # =======================================
 
 def search_menu():
-    print("Enter the username of the user you want to search for:")
-    pass
+    username = input("Enter the username to search: ")
+    id = -1
+    for index,user in enumerate(users):
+        if user.username == username and user_id != index and user_id not in user.blocked_users:
+            id = index
+            break
+    
+    if id == -1:
+        print("User not found.")
+        return
+    print(f"🆔 User found: @{users[id].username}")
+    print(f"📝 Bio: {users[id].bio}")
+    print(f"👥 Followers: {len(users[id].followers)}")
+    print(f"👥 Followings: {len(users[id].followings)}")
+    print(f"📰 Posts: {len(users[id].posts)}")
+    print(f"📰 Privacy type: {users[id].privacy}")
+    print()
+    print("-----------------------------------")
+    print()
+    
+    print("Actions:")
+    
+    # if current user is following searched user show unfollow option otherwise show follow option
+    if id in users[user_id].followings:
+        print("1. Unfollow")
+    else:
+        print("1. Follow")
+
+    # if current user has blocked searched user show unblock option otherwise show block option
+    if id in users[user_id].blocked_users:
+        print("2. Unblock")
+    else:
+        print("2. Block")
+
+    while True:
+        choice = input("Please choose an option (1-2) or 'q' to quit: ")
+        if choice == 'q':
+            break
+        if choice == '1':
+            if id in users[user_id].followings:
+                users[user_id].followings.remove(id)
+                users[id].followers.remove(user_id)
+                print(f"You unfollowed @{users[id].username}.")
+            else:
+                if users[id].privacy == "private":
+                    users[id].follow_requests.append(user_id)
+                    print(f"Follow request sent to @{users[id].username}.")
+                else:
+                    users[user_id].followings.append(id)
+                    users[id].followers.append(user_id)
+                    print(f"You followed @{users[id].username}.")
+            break
+        elif choice == '2':
+            if id in users[user_id].blocked_users:
+                users[user_id].blocked_users.remove(id)
+                print(f"You unblocked @{users[id].username}.")
+            else:
+                users[user_id].blocked_users.append(id)
+                print(f"You blocked @{users[id].username}.")
+
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
 # =======================================
 
