@@ -28,16 +28,9 @@ class User:
         self.password = password
         self.followers = []
         self.bio = ""
-
-        # TODO
-        # if username != "mehdi":
-        #     self.followings = [0]
-        # else:
         self.followings = []
-        
-        # TODO
-        self.posts = [Post("salam post", 0)]
-        self.stories = [Story("salam story", 0)]
+        self.posts = []
+        self.stories = []
         self.messages = []
         self.blocked_users = []
         self.saved_posts = []
@@ -136,20 +129,68 @@ def see_posts():
             print()
             post_list[len(post_list) + 1] = user
     
+    print("Actions:")
+    print("1. Save post")
+    print("2. Comment on post")
+    print("3. Like post")
+    
     while True:
-        choice = input("Enter the number of the post to like or 'q' to quit: ")
+        choice = input("Please choose an option (1-3) or 'q' to quit: ")
         if choice == 'q':
             break
-        try:
-            choice = int(choice)
-            if choice not in post_list:
-                print("Invalid choice. Please try again.")
-                continue
-            id = post_list[choice]
-            users[id].posts[-1].likes += 1
-            print(f"You liked {users[id].posts[-1].content} by @{users[id].username}.")
-        except ValueError:
-            print("Invalid input. Please enter a number.")
+        elif choice == '1':
+            while True:
+                choice = input("Enter the number of the post to save or 'q' to quit: ")
+                if choice == 'q':
+                    break
+                try:
+                    choice = int(choice)
+                    if choice not in post_list:
+                        print("Invalid choice. Please try again.")
+                        continue
+                    id = post_list[choice]
+                    users[id].posts[-1].saves += 1
+                    users[user_id].saved_posts.append(users[id].posts[-1])
+                    print(f"You saved {users[id].posts[-1].content} by @{users[id].username}.")
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+            break
+        elif choice == '2':
+            while True:
+                choice = input("Enter the number of the post to comment on or 'q' to quit: ")
+                if choice == 'q':
+                    break
+                try:
+                    choice = int(choice)
+                    if choice not in post_list:
+                        print("Invalid choice. Please try again.")
+                        continue
+                    id = post_list[choice]
+                    comment = input("Enter your comment: ")
+                    users[id].posts[-1].comments.append(comment)
+                    print(f"You commented on {users[id].posts[-1].content} by @{users[id].username}.")
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+            break
+        elif choice == '3':
+            while True:
+                choice = input("Enter the number of the post to like or 'q' to quit: ")
+                if choice == 'q':
+                    break
+                try:
+                    choice = int(choice)
+                    if choice not in post_list:
+                        print("Invalid choice. Please try again.")
+                        continue
+                    id = post_list[choice]
+                    users[id].posts[-1].likes += 1
+                    print(f"You liked {users[id].posts[-1].content} by @{users[id].username}.")
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+        break
 
 def see_stories():
     print()
@@ -336,24 +377,137 @@ def search_menu():
 # =======================================
 
 def edit_profile():
+    print()
     print("Edit your profile")
-    pass
+    print("1. Change username")
+    print("2. Change email")
+    print("3. Change password")
+    print("4. Change bio")
+    choice = input("Please choose an option (1-4) or q to quit: ")
+    if choice == 'q':
+        return
+    elif choice == '1':
+        new_username = input("Enter new username: ")
+        users[user_id].username = new_username
+        print(f"Username changed to {new_username}.")
+    elif choice == '2':
+        new_email = input("Enter new email: ")
+        users[user_id].email = new_email
+        print(f"Email changed to {new_email}.")
+    elif choice == '3':
+        new_password = input("Enter new password: ")
+        users[user_id].password = new_password
+        print("Password changed successfully.")
+    elif choice == '4':
+        new_bio = input("Enter new bio: ")
+        users[user_id].bio = new_bio
+        print("Bio changed successfully.")
+    else:
+        print("Invalid choice. Please try again.")
 
 def see_my_posts():
+    print()
     print("See your posts")
-    pass
+    if len(users[user_id].posts) == 0:
+        print("No posts available.")
+        return
+    
+    for i, post in enumerate(users[user_id].posts):
+        print(f"{i + 1}. {post.content} (Posted on {post.date})")
+        print(f"❤️ Likes: {post.likes}")
+        print(f"💾 Saved: {post.saves}")
+        print("Comments: ")
+        for comment in post.comments:
+            print(f"- {comment}")
+        print()
+    
+    while True:
+        choice = input("Enter the number of the post to delete or 'q' to quit: ")
+        if choice == 'q':
+            break
+        try:
+            choice = int(choice)
+            if choice < 1 or choice > len(users[user_id].posts):
+                print("Invalid choice. Please try again.")
+                continue
+            users[user_id].posts.pop(choice - 1)
+            print("Post deleted successfully.")
+            break
+        except ValueError:
+            print("Invalid input. Please enter a number.")
 
 def see_saved_posts():
+    print()
     print("See your saved posts")
-    pass
+    if len(users[user_id].saved_posts) == 0:
+        print("No saved posts available.")
+        return
+    
+    for i, post in enumerate(users[user_id].saved_posts):
+        print(f"🆔 {i + 1}. @{users[post.user].username}")
+        print(f" {post.content} (Posted on {post.date})")
+        print(f"❤️ Likes: {post.likes}")
+        print(f"💾 Saved: {post.saves}")
+        print("Comments: ")
+        for comment in post.comments:
+            print(f"- {comment}")
+        print()
+    
+    while True:
+        choice = input("Enter the number of the post to unsave or 'q' to quit: ")
+        if choice == 'q':
+            break
+        try:
+            choice = int(choice)
+            if choice < 1 or choice > len(users[user_id].saved_posts):
+                print("Invalid choice. Please try again.")
+                continue
+            users[user_id].saved_posts.pop(choice - 1)
+            print("Post unsaved successfully.")
+            break
+        except ValueError:
+            print("Invalid input. Please enter a number.")
 
 def privacy_settings():
-    print("Change your privacy settings")
-    pass
+    print()
+    print("Privacy Settings")
+    print("1. Public")
+    print("2. Private")
+    choice = input("Please choose an option (1-2): ")
+    if choice == '1':
+        users[user_id].privacy = "public"
+        print("Your profile is now public.")
+    elif choice == '2':
+        users[user_id].privacy = "private"
+        print("Your profile is now private.")
+    else:
+        print("Invalid choice. Please try again.")
 
 def see_blocked_users():
-    print("See blocked users")
-    pass
+    print()
+    print("Blocked Users:")
+    if len(users[user_id].blocked_users) == 0:
+        print("No blocked users.")
+        return
+    
+    for i, user in enumerate(users[user_id].blocked_users):
+        print(f"{i + 1}. @{users[user].username}")
+
+    while True:
+        choice = input("Enter the number of the user to unblock or 'q' to quit: ")
+        if choice == 'q':
+            break
+        try:
+            choice = int(choice)
+            if choice < 1 or choice > len(users[user_id].blocked_users):
+                print("Invalid choice. Please try again.")
+                continue
+            id = users[user_id].blocked_users[choice - 1]
+            users[user_id].blocked_users.remove(id)
+            print(f"You unblocked @{users[id].username}.")
+            break
+        except ValueError:
+            print("Invalid input. Please enter a number.")
 
 def profile_menu():
     print()
