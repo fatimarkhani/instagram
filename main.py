@@ -88,7 +88,7 @@ def auth_menu():
         print("Welcome to the Authentication Menu")
         print("1. Login")
         print("2. Register")
-        print("3. Exit")
+        print("3. Exit (Close program)")
         choice = input("Please choose an option (1-3): ")
         if choice == '1':
             login()
@@ -152,6 +152,7 @@ def see_posts():
                     users[id].posts[-1].saves += 1
                     users[user_id].saved_posts.append(users[id].posts[-1])
                     print(f"You saved {users[id].posts[-1].content} by @{users[id].username}.")
+                    break
                 except ValueError:
                     print("Invalid input. Please enter a number.")
             break
@@ -169,6 +170,7 @@ def see_posts():
                     comment = input("Enter your comment: ")
                     users[id].posts[-1].comments.append(comment)
                     print(f"You commented on {users[id].posts[-1].content} by @{users[id].username}.")
+                    break
                 except ValueError:
                     print("Invalid input. Please enter a number.")
             break
@@ -185,6 +187,7 @@ def see_posts():
                     id = post_list[choice]
                     users[id].posts[-1].likes += 1
                     print(f"You liked {users[id].posts[-1].content} by @{users[id].username}.")
+                    break
                 except ValueError:
                     print("Invalid input. Please enter a number.")
             break
@@ -237,7 +240,7 @@ def create_post():
     print()
     print("Create a new post")
     content = input("Enter the content of the post: ")
-    new_post = Post(content, users[user_id])
+    new_post = Post(content, user_id)
     users[user_id].posts.append(new_post)
     print("Post created successfully!")
 
@@ -245,7 +248,7 @@ def create_story():
     print()
     print("Create a new story")
     content = input("Enter the content of the story: ")
-    new_story = Story(content, users[user_id])
+    new_story = Story(content, user_id)
     users[user_id].stories.append(new_story)
     print("Story created successfully!")
 
@@ -257,7 +260,7 @@ def see_follow_requests():
         return
     
     for i,user in enumerate(users[user_id].follow_requests):
-        print(f"{i + 1}. {users[user].username}")
+        print(f"{i + 1}. @{users[user].username}")
 
     while True:
         choice = input("Enter the number of the follow request to accept or 'q' to quit: ")
@@ -510,16 +513,15 @@ def see_blocked_users():
             print("Invalid input. Please enter a number.")
 
 def profile_menu():
-    print()
-    print("Welcome to the Profile Menu")
-    print("1. Edit profile")
-    print("2. See my posts")
-    print("3. See saved posts")
-    print("4. Privacy settings (public/private)")
-    print("5. See blocked users")
-    print("6. Exit")
-
     while True:
+        print()
+        print("Welcome to the Profile Menu")
+        print("1. Edit profile")
+        print("2. See my posts")
+        print("3. See saved posts")
+        print("4. Privacy settings (public/private)")
+        print("5. See blocked users")
+        print("6. Exit")
         choice = input("Please choose an option (1-6): ")
         if choice == '1':
             edit_profile()
@@ -548,7 +550,7 @@ def main_menu():
         print("2. Search")
         print("3. Profile")
         print("4. Logout")
-        print("5. Exit")
+        print("5. Exit (Close program)")
 
         choice = input("Please choose an option (1-4): ")
         if choice == '1':
